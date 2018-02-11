@@ -77,9 +77,6 @@ class KolesaKz(unittest.TestCase):
         #    "div.element-group.element-group-parameter-send_to_market.element-group-with-label.element-type-checkbox").click()
         #driver.find_element_by_id("send_to_market-checkbox-0").click()
 
-        # Сабмит
-        #driver.find_element_by_css_selector("input.js-submit").click()
-
     def save_captcha(self):
         driver = self.driver
         element = driver.find_element_by_class_name('captcha-image')
@@ -163,15 +160,10 @@ class KolesaKz(unittest.TestCase):
                 else:
                     driver.find_element_by_id("advert-captcha").send_keys(answer)
 
+        # Сабмит
         # driver.find_element_by_css_selector("input.js-submit").click()
         # driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
         # driver.find_element_by_css_selector("span.cabinet-decorated-link").click()
-        # driver.find_element_by_link_text(u"Мои объявления").click()
-        # driver.find_element_by_xpath("//li[4]/a/span").click()
-        # driver.find_element_by_css_selector("div.a-info-expand").click()
-        # driver.find_element_by_css_selector("div.col-sm-6.a-pay.a-pay-short.a-color-none").click()
-        # driver.find_element_by_css_selector("div.col-sm-6.a-pay.a-pay-short.a-color-none").click()
-        # driver.find_element_by_css_selector("div.a-info-expand").click()
 
     def is_element_present(self, how, what):
         try:
