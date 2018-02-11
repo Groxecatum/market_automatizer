@@ -45,8 +45,17 @@ class KolesaKz(unittest.TestCase):
         time.sleep(2)
         driver.find_element_by_css_selector(
             "#auto-car-order > div.radio-button > label > span.link.link-dashed").click()
+
+        # Наименование
+        driver.find_element_by_id("spare_name").click()
+        driver.find_element_by_id("spare_name").clear()
+        driver.find_element_by_id("spare_name").send_keys(u"Тест")
+
+        # Цена
         driver.find_element_by_id("price-user").click()
         time.sleep(1)
+
+        # Текст объявления
         driver.find_element_by_id("text").click()
         time.sleep(3)
         driver.find_element_by_id("text").clear()
@@ -61,21 +70,15 @@ class KolesaKz(unittest.TestCase):
         #time.sleep(1)
         #driver.find_element_by_id("_phone[0]").send_keys(u"8179300")
         #time.sleep(1)
-        driver.find_element_by_css_selector("div.text").click()
-        time.sleep(2)
-        driver.find_element_by_css_selector("li.1.option-hover").click()
-        time.sleep(1)
         driver.find_element_by_css_selector(
             "div.element-group.element-group-parameter-comments_allowed_for.element-group-xs.element-type-select.element-group-hint > div.group-element > div.field-container > div.selectbox.enabled > div.selectbox-select > div.text.selected").click()
-        driver.find_element_by_css_selector("li.2last.option-hover").click()
         time.sleep(3)
-        driver.find_element_by_css_selector(
-            "div.element-group.element-group-parameter-send_to_market.element-group-with-label.element-type-checkbox").click()
-        driver.find_element_by_id("send_to_market-checkbox-0").click()
-        driver.find_element_by_css_selector("input.js-submit").click()
-        driver.find_element_by_id("spare_name").click()
-        driver.find_element_by_id("spare_name").clear()
-        driver.find_element_by_id("spare_name").send_keys(u"Тест")
+        #driver.find_element_by_css_selector(
+        #    "div.element-group.element-group-parameter-send_to_market.element-group-with-label.element-type-checkbox").click()
+        #driver.find_element_by_id("send_to_market-checkbox-0").click()
+
+        # Сабмит
+        #driver.find_element_by_css_selector("input.js-submit").click()
 
     def save_captcha(self):
         driver = self.driver
