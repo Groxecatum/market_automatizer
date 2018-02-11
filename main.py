@@ -83,7 +83,10 @@ class KolesaKz(unittest.TestCase):
     def save_captcha(self):
         driver = self.driver
         element = driver.find_element_by_class_name('captcha-image')
-        return element.screenshot_as_base64() if element else ""
+        res = ""
+        if element:
+            res = element.screenshot_as_base64()
+        return res
 
     def send_captcha(self, img_base):
         request_dict = {"clientId": self.CLIENT_ID,
@@ -150,7 +153,7 @@ class KolesaKz(unittest.TestCase):
         driver.get("https://kolesa.kz/a/new/")
 
         self.fill_fields()
-        if self.is_element_present("class", "captcha-image"):
+        if self.is_element_present("class name", "captcha-image"):
             img_data = self.save_captcha()
 
             if img_data != "":
