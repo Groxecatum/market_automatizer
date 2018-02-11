@@ -28,18 +28,18 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_css_selector("option[value=\"2\"]").click()
         time.sleep(2)
         driver.find_element_by_css_selector("option[value=\"spare.parts\"]").click()
-        time.sleep(3)
+        time.sleep(4)
         Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text("BMW")
         driver.find_element_by_css_selector("option[value=\"11\"]").click()
-        time.sleep(1)
+        time.sleep(2)
         #Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text("   118")
         driver.find_element_by_css_selector("#auto-car-mm-1 > option[value=\"3\"]").click()
-        time.sleep(2)
+        time.sleep(3)
         #Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(u"regexp:E82 \\(2007\\s—\\s2013\\)")
         driver.find_element_by_css_selector("#auto-generation > option[value=\"3\"]").click()
-        time.sleep(2)
+        time.sleep(3)
         driver.find_element_by_id("filter-auto-car-mm-0").click()
-        time.sleep(1)
+        time.sleep(2)
         driver.find_element_by_css_selector(
             "#spare_condition > div.radio-button > label > span.link.link-dashed").click()
         time.sleep(2)
@@ -85,7 +85,7 @@ class KolesaKz(unittest.TestCase):
         element = driver.find_element_by_class_name('captcha-image')
         res = ""
         if element:
-            res = element.screenshot_as_base64()
+            res = element.screenshot_as_base64
         return res
 
     def send_captcha(self, img_base):
@@ -109,10 +109,10 @@ class KolesaKz(unittest.TestCase):
         # Находим и возвращаем taskId
         response_dict = json.loads(response.content)
         if response_dict["errorId"] == 0:
-            return response_dict["tasskId"]
+            return response_dict["taskId"]
         else:
             print response_dict["errorCode"]
-            print response_dict["errorDescripton"]
+            print response_dict["errorDescription"]
             return -1
 
     def ask_for_answer(self, task_id):
@@ -135,16 +135,16 @@ class KolesaKz(unittest.TestCase):
 
     def captcha_processing(self, img_base):
         task_id = self.send_captcha(img_base)
-
-        # Ждать ответа
         res = 0
-        tries_left = 10
-        while (res == 0) or (tries_left <= 0):
-            time.sleep(2)
-            tries_left -= 1
-            res = self.ask_for_answer(task_id)
-            if res < 0:
-                break
+        if task_id > 0:
+            # Ждать ответа
+            tries_left = 10
+            while (res == 0) or (tries_left <= 0):
+                time.sleep(2)
+                tries_left -= 1
+                res = self.ask_for_answer(task_id)
+                if res < 0:
+                    break
 
         return res
 
@@ -158,10 +158,10 @@ class KolesaKz(unittest.TestCase):
 
             if img_data != "":
                 answer = self.captcha_processing(img_data)
-                if answer < 0:
-                    print "Ошибка"
+                if answer <= 0:
+                    print "Ошибка добавления строки №"
                 else:
-                    driver.find_element_by_id("upload-btn").send_keys(answer)
+                    driver.find_element_by_id("advert-captcha").send_keys(answer)
 
         # driver.find_element_by_css_selector("input.js-submit").click()
         # driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
