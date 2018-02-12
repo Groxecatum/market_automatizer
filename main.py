@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest
 import time
 import json
 import requests
+import csv
 
 
 class KolesaKz(unittest.TestCase):
     IMAGE_PATH = u"/home/ysklyarov/"
     CAPTCHA_SIZE = 40
-    CLIENT_ID = ""
+    CLIENT_ID = "8b93bffe7deb2e25d36e7fff021bdb66"
 
     def setUp(self):
         self.driver = webdriver.Firefox()
@@ -22,47 +22,64 @@ class KolesaKz(unittest.TestCase):
         self.verificationErrors = []
         self.accept_next_alert = True
 
-    def fill_fields(self):
-        driver = self.driver
+    def fill_fields(self, driver, row):
+        # Тип
         Select(driver.find_element_by_id("change-section-select")).select_by_visible_text(u"Запчасти")
         driver.find_element_by_css_selector("option[value=\"2\"]").click()
         time.sleep(2)
         driver.find_element_by_css_selector("option[value=\"spare.parts\"]").click()
         time.sleep(4)
-        Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text("BMW")
-        driver.find_element_by_css_selector("option[value=\"11\"]").click()
-        time.sleep(2)
-        #Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text("   118")
-        driver.find_element_by_css_selector("#auto-car-mm-1 > option[value=\"3\"]").click()
-        time.sleep(3)
-        #Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(u"regexp:E82 \\(2007\\s—\\s2013\\)")
-        driver.find_element_by_css_selector("#auto-generation > option[value=\"3\"]").click()
-        time.sleep(3)
-        driver.find_element_by_id("filter-auto-car-mm-0").click()
-        time.sleep(2)
-        driver.find_element_by_css_selector(
-            "#spare_condition > div.radio-button > label > span.link.link-dashed").click()
-        time.sleep(2)
-        driver.find_element_by_css_selector(
-            "#auto-car-order > div.radio-button > label > span.link.link-dashed").click()
 
         # Наименование
         driver.find_element_by_id("spare_name").click()
         driver.find_element_by_id("spare_name").clear()
-        driver.find_element_by_id("spare_name").send_keys(u"Тест")
+        driver.find_element_by_id("spare_name").send_keys(unicode(row[3].decode('utf-8')))
+        time.sleep(3)
+
+        # Марка
+        Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text(row[0].decode('utf-8'))
+        #driver.find_element_by_css_selector("option[value=\"11\"]").click()
+        time.sleep(2)
+        if row[1] != "":
+            Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
+        #driver.find_element_by_css_selector("#auto-car-mm-1 > option[value=\"3\"]").click()
+        time.sleep(3)
+        if row[2] != "":
+            Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(row[2].decode('utf-8'))
+        #driver.find_element_by_css_selector("#auto-generation > option[value=\"3\"]").click()
+        time.sleep(3)
+        #driver.find_element_by_id("filter-auto-car-mm-0").click()
+        time.sleep(2)
+        # Состояние - новое или б\у
+        driver.find_element_by_css_selector(
+            "#spare_condition > div.radio-button > label > span.link.link-dashed").click()
+        time.sleep(2)
+
+        driver.find_element_by_css_selector(
+            "#auto-car-order > div.radio-button > label > span.link.link-dashed").click()
+        time.sleep(1)
 
         # Цена
         driver.find_element_by_id("price-user").click()
+        driver.find_element_by_id("price-user").send_keys(row[5].decode('utf-8'))
         time.sleep(1)
 
         # Текст объявления
         driver.find_element_by_id("text").click()
-        time.sleep(3)
         driver.find_element_by_id("text").clear()
-        driver.find_element_by_id("text").send_keys(u"Тестирую объявление")
-        #driver.find_element_by_id("upload-btn").click()
-        driver.find_element_by_id("upload-btn").clear()
-        driver.find_element_by_id("upload-btn").send_keys(self.IMAGE_PATH + u"image.png")
+        driver.find_element_by_id("text").send_keys(row[4].decode('utf-8'))
+        time.sleep(3)
+
+        # Картинка
+        if row[6] != "":
+            driver.find_element_by_id("upload-btn").clear()
+            driver.find_element_by_id("upload-btn").send_keys(self.IMAGE_PATH + row[6].decode('utf-8'))
+
+        # Город
+        driver.find_element_by_xpath("//div[12]/div/div/div/div/div").click()
+        driver.find_element_by_xpath("//div[12]/div/div/div/ul/li[5]").click()
+
+        # Телефон
         #driver.find_element_by_id("upload-btn").send_keys(Keys.ENTER)
         # driver.find_element_by_id("_phone[0]").send_keys(u"7")
         #time.sleep(1)
@@ -70,23 +87,25 @@ class KolesaKz(unittest.TestCase):
         #time.sleep(1)
         #driver.find_element_by_id("_phone[0]").send_keys(u"8179300")
         #time.sleep(1)
-        driver.find_element_by_css_selector(
-            "div.element-group.element-group-parameter-comments_allowed_for.element-group-xs.element-type-select.element-group-hint > div.group-element > div.field-container > div.selectbox.enabled > div.selectbox-select > div.text.selected").click()
-        time.sleep(3)
-        #driver.find_element_by_css_selector(
-        #    "div.element-group.element-group-parameter-send_to_market.element-group-with-label.element-type-checkbox").click()
-        #driver.find_element_by_id("send_to_market-checkbox-0").click()
 
-    def save_captcha(self):
-        driver = self.driver
+        # Почта
+
+        # Кто комментирует?
+        driver.find_element_by_xpath("//div[20]/div/div/div/div/div").click()
+        driver.find_element_by_xpath("//div[20]/div/div/div/ul/li[4]").click()
+        time.sleep(3)
+
+    def save_captcha(self, driver):
+        driver.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
         element = driver.find_element_by_class_name('captcha-image')
         res = ""
         if element:
             res = element.screenshot_as_base64
+            element.screenshot('/home/ysklyarov/shot.png')
         return res
 
     def send_captcha(self, img_base):
-        request_dict = {"clientId": self.CLIENT_ID,
+        request_dict = {"clientKey": self.CLIENT_ID,
                         "task": {
                             "type": "ImageToTextTask",
                             "body": img_base,
@@ -101,8 +120,7 @@ class KolesaKz(unittest.TestCase):
 
         json_request = json.dumps(request_dict)
         # Послать капчу
-        headers = {'Content-type': 'application/json'}
-        response = requests.post("https://api.anti-captcha.com/createTask", data=json_request, headers=headers)
+        response = requests.post("https://api.anti-captcha.com/createTask", data=json_request)
         # Находим и возвращаем taskId
         response_dict = json.loads(response.content)
         if response_dict["errorId"] == 0:
@@ -113,7 +131,7 @@ class KolesaKz(unittest.TestCase):
             return -1
 
     def ask_for_answer(self, task_id):
-        request_dict = {"clientId": self.CLIENT_ID, "taskId": task_id}
+        request_dict = {"clientKey": self.CLIENT_ID, "taskId": task_id}
         json_request = json.dumps(request_dict)
         # Послать капчу
         headers = {'Content-type': 'application/json'}
@@ -149,16 +167,24 @@ class KolesaKz(unittest.TestCase):
         driver = self.driver
         driver.get("https://kolesa.kz/a/new/")
 
-        self.fill_fields()
-        if self.is_element_present("class name", "captcha-image"):
-            img_data = self.save_captcha()
+        with open('data.csv', 'rb') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
+            header = True
+            for row in spamreader:
+                if header:
+                    header = False
+                    continue   #пропускаем хедер
+                self.fill_fields(driver, row)
+                if self.is_element_present("class name", "captcha-image"):
+                    img_data = self.save_captcha(driver)
 
-            if img_data != "":
-                answer = self.captcha_processing(img_data)
-                if answer <= 0:
-                    print "Ошибка добавления строки №"
-                else:
-                    driver.find_element_by_id("advert-captcha").send_keys(answer)
+                    if img_data != "":
+                        answer = self.captcha_processing(img_data)
+                        if answer <= 0:
+                            print "Ошибка добавления строки №"
+                        else:
+                            driver.find_element_by_id("advert-captcha").send_keys(answer)
+                time.sleep(20)
 
         # Сабмит
         # driver.find_element_by_css_selector("input.js-submit").click()
