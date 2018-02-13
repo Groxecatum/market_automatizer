@@ -17,10 +17,24 @@ class KolesaKz(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(1000)
+        self.driver.implicitly_wait(10000)
         self.base_url = "https://www.kolesa.kz/"
         self.verificationErrors = []
         self.accept_next_alert = True
+
+    def login(self):
+        driver = self.driver
+        driver.get("https://id.kolesa.kz/login/?destination=https%3A%2F%2Fkolesa.kz%2Fmy%2F")
+        # Мыло
+        driver.find_element_by_id("email").click()
+        driver.find_element_by_id("email").clear()
+        driver.find_element_by_id("email").send_keys(u"pupenkoff@mail.ru")
+        # Пароль
+        driver.find_element_by_id("password").click()
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys(u"123456Qw")
+
+        #driver.find_element_by_class_name("login-btn").click()
 
     def fill_fields(self, driver, row):
         # Тип
@@ -38,18 +52,13 @@ class KolesaKz(unittest.TestCase):
 
         # Марка
         Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text(row[0].decode('utf-8'))
-        #driver.find_element_by_css_selector("option[value=\"11\"]").click()
         time.sleep(2)
         if row[1] != "":
             Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
-        #driver.find_element_by_css_selector("#auto-car-mm-1 > option[value=\"3\"]").click()
         time.sleep(3)
         if row[2] != "":
             Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(row[2].decode('utf-8'))
-        #driver.find_element_by_css_selector("#auto-generation > option[value=\"3\"]").click()
         time.sleep(3)
-        #driver.find_element_by_id("filter-auto-car-mm-0").click()
-        time.sleep(2)
         # Состояние - новое или б\у
         driver.find_element_by_css_selector(
             "#spare_condition > div.radio-button > label > span.link.link-dashed").click()
@@ -80,15 +89,10 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_xpath("//div[12]/div/div/div/ul/li[5]").click()
 
         # Телефон
-        #driver.find_element_by_id("upload-btn").send_keys(Keys.ENTER)
-        # driver.find_element_by_id("_phone[0]").send_keys(u"7")
-        #time.sleep(1)
-        #driver.find_element_by_id("_phone[0]").send_keys(u"707")
-        #time.sleep(1)
-        #driver.find_element_by_id("_phone[0]").send_keys(u"8179300")
-        #time.sleep(1)
-
-        # Почта
+        driver.find_element_by_name("_phone[0]").click()
+        driver.find_element_by_name("_phone[0]").clear()
+        driver.find_element_by_name("_phone[0]").send_keys("+7 (777) 777-77-77")
+        time.sleep(1)
 
         # Кто комментирует?
         driver.find_element_by_xpath("//div[20]/div/div/div/div/div").click()
@@ -164,6 +168,8 @@ class KolesaKz(unittest.TestCase):
         return res
 
     def test_kolesa_kz(self):
+        self.login()
+
         driver = self.driver
         driver.get("https://kolesa.kz/a/new/")
 
