@@ -17,7 +17,7 @@ class KolesaKz(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(10000)
+        self.driver.implicitly_wait(30)
         self.base_url = "https://www.kolesa.kz/"
         self.verificationErrors = []
         self.accept_next_alert = True
@@ -28,13 +28,13 @@ class KolesaKz(unittest.TestCase):
         # Мыло
         driver.find_element_by_id("email").click()
         driver.find_element_by_id("email").clear()
-        driver.find_element_by_id("email").send_keys(u"pupenkoff@mail.ru")
+        driver.find_element_by_id("email").send_keys(u"pupenkoff@bk.ru")
         # Пароль
         driver.find_element_by_id("password").click()
         driver.find_element_by_id("password").clear()
         driver.find_element_by_id("password").send_keys(u"123456Qw")
 
-        #driver.find_element_by_class_name("login-btn").click()
+        driver.find_element_by_class_name("login-btn").click()
 
     def fill_fields(self, driver, row):
         # Тип
@@ -52,7 +52,7 @@ class KolesaKz(unittest.TestCase):
 
         # Марка
         Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text(row[0].decode('utf-8'))
-        time.sleep(2)
+        #time.sleep(2)
         if row[1] != "":
             Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
         time.sleep(3)
@@ -67,7 +67,6 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_css_selector(
             "#auto-car-order > div.radio-button > label > span.link.link-dashed").click()
         time.sleep(1)
-
         # Цена
         driver.find_element_by_id("price-user").click()
         driver.find_element_by_id("price-user").send_keys(row[5].decode('utf-8'))
@@ -91,7 +90,7 @@ class KolesaKz(unittest.TestCase):
         # Телефон
         driver.find_element_by_name("_phone[0]").click()
         driver.find_element_by_name("_phone[0]").clear()
-        driver.find_element_by_name("_phone[0]").send_keys("+7 (777) 777-77-77")
+        driver.find_element_by_name("_phone[0]").send_keys("+7 (707) 817-93-00")
         time.sleep(1)
 
         # Кто комментирует?
@@ -190,12 +189,11 @@ class KolesaKz(unittest.TestCase):
                             print "Ошибка добавления строки №"
                         else:
                             driver.find_element_by_id("advert-captcha").send_keys(answer)
+                # Сабмит
+                driver.find_element_by_css_selector("input.js-submit").click()
+                driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
+                driver.find_element_by_css_selector("span.cabinet-decorated-link").click()
                 time.sleep(20)
-
-        # Сабмит
-        # driver.find_element_by_css_selector("input.js-submit").click()
-        # driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
-        # driver.find_element_by_css_selector("span.cabinet-decorated-link").click()
 
     def is_element_present(self, how, what):
         try:
