@@ -60,13 +60,8 @@ class KolesaKz(unittest.TestCase):
             Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(row[2].decode('utf-8'))
         time.sleep(2)
         # Состояние - новое или б\у
-        driver.find_element_by_css_selector(
-            "#spare_condition > div.radio-button > label > span.link.link-dashed").click()
-        #time.sleep(2)
-
-        driver.find_element_by_css_selector(
-            "#auto-car-order > div.radio-button > label > span.link.link-dashed").click()
-        #time.sleep(1)
+        driver.find_element_by_xpath("//div[@id='spare_condition']/div[2]/label").click()
+        driver.find_element_by_xpath("//div[@id='auto-car-order']/div/label/span").click()
         # Цена
         driver.find_element_by_id("price-user").click()
         driver.find_element_by_id("price-user").send_keys(row[5].decode('utf-8'))
