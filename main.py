@@ -48,29 +48,29 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_id("spare_name").click()
         driver.find_element_by_id("spare_name").clear()
         driver.find_element_by_id("spare_name").send_keys(unicode(row[3].decode('utf-8')))
-        time.sleep(3)
+        #time.sleep(3)
 
         # Марка
         Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text(row[0].decode('utf-8'))
-        #time.sleep(2)
+        time.sleep(2)
         if row[1] != "":
             Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
-        time.sleep(3)
+        time.sleep(2)
         if row[2] != "":
             Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(row[2].decode('utf-8'))
-        time.sleep(3)
+        time.sleep(2)
         # Состояние - новое или б\у
         driver.find_element_by_css_selector(
             "#spare_condition > div.radio-button > label > span.link.link-dashed").click()
-        time.sleep(2)
+        #time.sleep(2)
 
         driver.find_element_by_css_selector(
             "#auto-car-order > div.radio-button > label > span.link.link-dashed").click()
-        time.sleep(1)
+        #time.sleep(1)
         # Цена
         driver.find_element_by_id("price-user").click()
         driver.find_element_by_id("price-user").send_keys(row[5].decode('utf-8'))
-        time.sleep(1)
+        #time.sleep(1)
 
         # Текст объявления
         driver.find_element_by_id("text").click()
