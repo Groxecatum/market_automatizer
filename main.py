@@ -76,7 +76,7 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_id("text").click()
         driver.find_element_by_id("text").clear()
         driver.find_element_by_id("text").send_keys(row[4].decode('utf-8'))
-        time.sleep(3)
+        #time.sleep(3)
 
         # Картинка
         if row[6] != "":
