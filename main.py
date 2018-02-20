@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
+from selenium.webdriver.common.by import By
 import unittest
 import time
 import json
@@ -12,12 +13,16 @@ import csv
 
 class KolesaKz(unittest.TestCase):
     IMAGE_PATH = u"/home/ysklyarov/"
-    CAPTCHA_SIZE = 40
     CLIENT_ID = "8b93bffe7deb2e25d36e7fff021bdb66"
+    LOGIN = u"pupenkoff@bk.ru"
+    PASS = u"123456Qw"
+    PHONE1 = "+7 (707) 817-93-00"
+    PHONE2 = "+7 (707) 817-93-00"
+    PHONE3 = "+7 (707) 817-93-00"
 
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(30)
+        self.driver.implicitly_wait(10)
         self.base_url = "https://www.kolesa.kz/"
         self.verificationErrors = []
         self.accept_next_alert = True
@@ -28,11 +33,11 @@ class KolesaKz(unittest.TestCase):
         # Мыло
         driver.find_element_by_id("email").click()
         driver.find_element_by_id("email").clear()
-        driver.find_element_by_id("email").send_keys(u"pupenkoff@bk.ru")
+        driver.find_element_by_id("email").send_keys(self.LOGIN)
         # Пароль
         driver.find_element_by_id("password").click()
         driver.find_element_by_id("password").clear()
-        driver.find_element_by_id("password").send_keys(u"123456Qw")
+        driver.find_element_by_id("password").send_keys(self.PASS)
 
         driver.find_element_by_class_name("login-btn").click()
 
@@ -51,13 +56,13 @@ class KolesaKz(unittest.TestCase):
         #time.sleep(3)
 
         # Марка
-        Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text(row[0].decode('utf-8'))
+        Select(driver.find_element_by_id("auto-car-mm-0")).select_by_value(row[0].decode('utf-8'))
         time.sleep(2)
         if row[1] != "":
-            Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
+            Select(driver.find_element_by_id("auto-car-mm-1")).select_by_value(row[1].decode('utf-8'))
         time.sleep(2)
         if row[2] != "":
-            Select(driver.find_element_by_id("auto-generation")).select_by_visible_text(row[2].decode('utf-8'))
+            Select(driver.find_element_by_id("auto-generation")).select_by_value(row[2].decode('utf-8'))
         time.sleep(2)
         # Состояние - новое или б\у
         driver.find_element_by_xpath("//div[@id='spare_condition']/div[2]/label").click()
@@ -82,11 +87,23 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_xpath("//div[12]/div/div/div/div/div").click()
         driver.find_element_by_xpath("//div[12]/div/div/div/ul/li[5]").click()
 
-        # Телефон
+        # Телефоны
         driver.find_element_by_name("_phone[0]").click()
         driver.find_element_by_name("_phone[0]").clear()
-        driver.find_element_by_name("_phone[0]").send_keys("+7 (707) 817-93-00")
+        driver.find_element_by_name("_phone[0]").send_keys(self.PHONE1)
         time.sleep(1)
+
+        if self.PHONE2 != "":
+            driver.find_element_by_name("_phone[1]").click()
+            driver.find_element_by_name("_phone[1]").clear()
+            driver.find_element_by_name("_phone[1]").send_keys(self.PHONE2)
+            time.sleep(1)
+
+        if self.PHONE3 != "":
+            driver.find_element_by_name("_phone[2]").click()
+            driver.find_element_by_name("_phone[2]").clear()
+            driver.find_element_by_name("_phone[2]").send_keys(self.PHONE3)
+            time.sleep(1)
 
         # Кто комментирует?
         driver.find_element_by_xpath("//div[20]/div/div/div/div/div").click()
@@ -95,11 +112,11 @@ class KolesaKz(unittest.TestCase):
 
     def save_captcha(self, driver):
         driver.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
-        element = driver.find_element_by_class_name('captcha-image')
+        element = driver.find_element_by_xpath("/html/body/main/div/div[3]/div/form/div[2]/div[23]/div/div/div/img")#find_element_by_class_name('captcha-image')
         res = ""
         if element:
             res = element.screenshot_as_base64
-            element.screenshot('/home/ysklyarov/shot.png')
+            #element.screenshot('/home/ysklyarov/shot.png')
         return res
 
     def send_captcha(self, img_base):
@@ -165,17 +182,16 @@ class KolesaKz(unittest.TestCase):
         self.login()
 
         driver = self.driver
-        driver.get("https://kolesa.kz/a/new/")
-
         with open('data.csv', 'rb') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
+            spamreader = csv.reader(csvfile, delimiter=';', quotechar='"')
             header = True
             for row in spamreader:
                 if header:
                     header = False
                     continue   #пропускаем хедер
+                driver.get("https://kolesa.kz/a/new/")
                 self.fill_fields(driver, row)
-                if self.is_element_present("class name", "captcha-image"):
+                if self.is_element_present(By.ID, "advert-captcha"):
                     img_data = self.save_captcha(driver)
 
                     if img_data != "":
@@ -187,8 +203,7 @@ class KolesaKz(unittest.TestCase):
                 # Сабмит
                 driver.find_element_by_css_selector("input.js-submit").click()
                 driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
-                driver.find_element_by_css_selector("span.cabinet-decorated-link").click()
-                time.sleep(20)
+                time.sleep(5)
 
     def is_element_present(self, how, what):
         try:
