@@ -56,10 +56,10 @@ class KolesaKz(unittest.TestCase):
         #time.sleep(3)
 
         # Марка
-        Select(driver.find_element_by_id("auto-car-mm-0")).select_by_value(row[0].decode('utf-8'))
+        Select(driver.find_element_by_id("auto-car-mm-0")).select_by_visible_text(row[0].decode('utf-8'))
         time.sleep(2)
         if row[1] != "":
-            Select(driver.find_element_by_id("auto-car-mm-1")).select_by_value(row[1].decode('utf-8'))
+            Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
         time.sleep(2)
         if row[2] != "":
             Select(driver.find_element_by_id("auto-generation")).select_by_value(row[2].decode('utf-8'))
@@ -106,7 +106,7 @@ class KolesaKz(unittest.TestCase):
             time.sleep(1)
 
         # Кто комментирует?
-        driver.find_element_by_xpath("//div[20]/div/div/div/div/div").click()
+        driver.find_element_by_xpath("//div[20]/div/div/div/div/div").click() # Не работает с зареганным магазином
         driver.find_element_by_xpath("//div[20]/div/div/div/ul/li[4]").click()
         time.sleep(3)
 
