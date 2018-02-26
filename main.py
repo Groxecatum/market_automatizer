@@ -14,11 +14,11 @@ import csv
 class KolesaKz(unittest.TestCase):
     IMAGE_PATH = u"/home/ysklyarov/"
     CLIENT_ID = "8b93bffe7deb2e25d36e7fff021bdb66"
-    LOGIN = u"pupenkoff@bk.ru"
-    PASS = u"123456Qw"
-    PHONE1 = "+7 (707) 817-93-00"
-    PHONE2 = "+7 (707) 817-93-00"
-    PHONE3 = "+7 (707) 817-93-00"
+    LOGIN = u"87054571691@mail.ru"
+    PASS = u"1q2w3e4r5t6y7u8i9o0p"
+    PHONE1 = "+7 (705) 457-16-91"
+    PHONE2 = ""
+    PHONE3 = ""
 
     def setUp(self):
         self.driver = webdriver.Firefox()
@@ -42,8 +42,9 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_class_name("login-btn").click()
 
     def fill_fields(self, driver, row):
+        print row[3].decode('utf-8')
         # Тип
-        Select(driver.find_element_by_id("change-section-select")).select_by_visible_text(u"Запчасти")
+        #Select(driver.find_element_by_id("change-section-select")).select_by_visible_text(u"Запчасти")
         driver.find_element_by_css_selector("option[value=\"2\"]").click()
         time.sleep(2)
         driver.find_element_by_css_selector("option[value=\"spare.parts\"]").click()
@@ -108,7 +109,7 @@ class KolesaKz(unittest.TestCase):
         # Кто комментирует?
         driver.find_element_by_xpath("//div[20]/div/div/div/div/div").click() # Не работает с зареганным магазином
         driver.find_element_by_xpath("//div[20]/div/div/div/ul/li[4]").click()
-        time.sleep(3)
+        time.sleep(1)
 
     def save_captcha(self, driver):
         driver.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
@@ -183,14 +184,15 @@ class KolesaKz(unittest.TestCase):
 
         driver = self.driver
         with open('data.csv', 'rb') as csvfile:
-            spamreader = csv.reader(csvfile, delimiter=';', quotechar='"')
+            reader = csv.reader(csvfile, delimiter=';', quotechar='"')
             header = True
-            for row in spamreader:
+            for row in reader:
                 if header:
                     header = False
                     continue   #пропускаем хедер
                 driver.get("https://kolesa.kz/a/new/")
                 self.fill_fields(driver, row)
+
                 if self.is_element_present(By.ID, "advert-captcha"):
                     img_data = self.save_captcha(driver)
 
