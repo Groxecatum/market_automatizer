@@ -179,33 +179,56 @@ class KolesaKz(unittest.TestCase):
 
         return res
 
+    def handle_alert(self, driver):
+        try:
+            alert = driver.switch_to.alert
+            if alert:
+                alert.accept()
+        except Exception as e:
+            print e
+
+
     def test_kolesa_kz(self):
         self.login()
 
         driver = self.driver
         with open('data.csv', 'rb') as csvfile:
-            reader = csv.reader(csvfile, delimiter=';', quotechar='"')
-            header = True
-            for row in reader:
-                if header:
-                    header = False
-                    continue   #пропускаем хедер
-                driver.get("https://kolesa.kz/a/new/")
-                self.fill_fields(driver, row)
+            with open('failed.csv', 'wb+') as fails_log:
+                reader = csv.reader(csvfile, delimiter=';', quotechar='"')
+                failures_writer = csv.writer(fails_log, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                header = True
+                for row in reader:
+                    try:
+                        if header:
+                            header = False
+                            continue   #пропускаем хедер
 
-                if self.is_element_present(By.ID, "advert-captcha"):
-                    img_data = self.save_captcha(driver)
+                        driver.get("https://kolesa.kz/a/new/")
 
-                    if img_data != "":
-                        answer = self.captcha_processing(img_data)
-                        if answer <= 0:
-                            print "Ошибка добавления строки №"
-                        else:
-                            driver.find_element_by_id("advert-captcha").send_keys(answer)
-                # Сабмит
-                driver.find_element_by_css_selector("input.js-submit").click()
-                driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
-                time.sleep(5)
+                        # Остался запрос "Уйти со страницы?"
+                        self.handle_alert(driver)
+
+                        self.fill_fields(driver, row)
+
+                        if self.is_element_present(By.ID, "advert-captcha"):
+                            img_data = self.save_captcha(driver)
+
+                            if img_data != "":
+                                answer = self.captcha_processing(img_data)
+                                if answer <= 0:
+                                    print "Ошибка добавления строки №"
+                                else:
+                                    driver.find_element_by_id("advert-captcha").send_keys(answer)
+                        # Сабмит
+                        driver.find_element_by_css_selector("input.js-submit").click()
+                        driver.find_element_by_css_selector("div.payments__button.js-payment-button.motivation__button").click()
+                        time.sleep(5)
+                    except Exception as e:
+                        print e
+                        failures_writer.writerow(row)
+                        fails_log.flush()
+                        continue
+
 
     def is_element_present(self, how, what):
         try:
