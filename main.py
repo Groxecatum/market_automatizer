@@ -64,7 +64,7 @@ class KolesaKz(unittest.TestCase):
             Select(driver.find_element_by_id("auto-car-mm-1")).select_by_visible_text(row[1].decode('utf-8'))
         time.sleep(2)
         if row[2] != "":
-            Select(driver.find_element_by_id("auto-generation")).select_by_value(row[2].decode('utf-8'))
+            Select(driver.find_element_by_id("auto-generation")).select_by_index(int(row[2].decode('utf-8')))
         time.sleep(2)
         # Состояние - новое или б\у
         driver.find_element_by_xpath("//div[@id='spare_condition']/div[2]/label").click()
