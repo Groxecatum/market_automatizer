@@ -14,9 +14,9 @@ import csv
 class KolesaKz(unittest.TestCase):
     IMAGE_PATH = u"/home/ysklyarov/"
     CLIENT_ID = "8b93bffe7deb2e25d36e7fff021bdb66"
-    LOGIN = u"87054571691@mail.ru"
-    PASS = u"1q2w3e4r5t6y7u8i9o0p"
-    PHONE1 = "+7 (705) 457-16-91"
+    LOGIN = u"87017565078@mail.ru"
+    PASS = u"satpaeva139"
+    PHONE1 = "+7 (701) 756-50-78"
     PHONE2 = ""
     PHONE3 = ""
 
@@ -51,6 +51,7 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_css_selector("option[value=\"spare.parts\"]").click()
         time.sleep(4)
 
+        driver.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
         # Наименование
         driver.find_element_by_id("spare_name").click()
         driver.find_element_by_id("spare_name").clear()
@@ -71,6 +72,7 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_xpath("//div[@id='auto-car-order']/div/label/span").click()
         # Цена
         driver.find_element_by_id("price-user").click()
+        driver.find_element_by_id("price-user").clear()
         driver.find_element_by_id("price-user").send_keys(row[5].decode('utf-8'))
         #time.sleep(1)
 
