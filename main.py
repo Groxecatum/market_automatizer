@@ -42,7 +42,7 @@ class KolesaKz(unittest.TestCase):
         driver.find_element_by_class_name("login-btn").click()
 
     def fill_fields(self, driver, row):
-        print row[3]
+        print row[3].decode('utf-8')
         driver.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
         # Тип
         #Select(driver.find_element_by_id("change-section-select")).select_by_visible_text(u"Запчасти")
