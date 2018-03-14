@@ -184,6 +184,7 @@ class KolesaKz(unittest.TestCase):
             alert = driver.switch_to.alert
             if alert:
                 alert.accept()
+                time.sleep(3)
         except Exception as e:
             print e
 
